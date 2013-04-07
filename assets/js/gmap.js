@@ -39,21 +39,20 @@
 				t.db.commit();
 			} else {
 				t.db.query(_TABLE, function(row){
-					t.addMarker(row.lat, row.lng, row.name);
+					t.addMarker(row.lat, row.lng, row.name, row.index);
 				});
 			}
 				
 			if(t.markers.length>1) {
 				t.map.fitBounds(t.bounds);
 			} else if (t.markers.length==1) {
-				console.log(t.markers);
-				t.map.panTo(t.markers[0][0].getPosition());
+				t.map.panTo(t.markers[0].getPosition());
 			}
 			
 			return t.map;
 		}
 		
-		t.addMarker = function(lat, lng, name, callback) {
+		t.addMarker = function(lat, lng, name, index) {
 			var latlng = new google.maps.LatLng(lat, lng);
 		
 			var marker = new google.maps.Marker({
@@ -62,11 +61,16 @@
 				title: name,
 			});
 			
-			var index = t.markers.length +1; //identifier for row in table
-			t.markers.push([marker, index]);
+			marker.index = index;
+
+			t.markers.push(marker);
 			
 			google.maps.event.addListener(marker, 'click', function(){
-				var row = t.db.query(_TABLE, {index:index});
+				var row = t.db.query(_TABLE, {index:marker.index});
+				
+				console.log(marker.index);
+				console.log(t.db.query(_TABLE));
+				
 				row = row[0];
 				
 				var form    = $('#edit-marker');
@@ -86,7 +90,7 @@
 				$("a[href='#edit']").click();
 			});
 			t.bounds.extend(latlng);
-			return [marker, index];
+			return marker;
 		}
 		
 		t.moveMarker = function(marker, lat, lng) {
@@ -173,6 +177,17 @@
 					callback(response);
 				}				
 			});
+		}
+		
+		t.getOpenIndex = function() {
+			var max = 1;
+			var result = t.db.query(_TABLE);
+			for(var i=0, len=result.length; i<len; i++){
+				if (result[i].index > max){
+					max = result[i].index;
+				}
+			}
+			return (max+1);
 		}
 		
 		return t;

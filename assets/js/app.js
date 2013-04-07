@@ -33,7 +33,8 @@
 			var $city   = $t.find("#city");
 			var $state  = $t.find("#state");
 			var $zip    = $t.find("#zip");
-			var index = map.markers.length +1;
+			
+			//var index = map.markers.length +1;
 			
 			var address = [
 				$street.val(),
@@ -56,7 +57,9 @@
 					var lng = response.results[0].geometry.location.lng();
 					
 					if(!map.hasLatLng(lat, lng)) {
-						var marker = map.addMarker(lat, lng, $name.val() /*callback*/);
+						var index = map.getOpenIndex();
+						console.log("openindex =" + index);
+						var marker = map.addMarker(lat, lng, $name.val(), index);
 						map.saveRow({name: $name.val(), street: $street.val(), city: $city.val(), state: $state.val(), zip: $zip.val(), lat: lat, lng: lng, index: index});
 						resetFields();
 						goHome();
@@ -104,13 +107,22 @@
 					var lng = response.results[0].geometry.location.lng();
 					
 					if(!map.hasLatLng(lat, lng)) {
-						map.moveMarker(map.markers[index-1][0], lat, lng);
+						for(var i=0, len=map.markers.length; i<len; i++) {
+							if(map.markers[i].index==index) {
+								map.moveMarker(map.markers[i], lat, lng);
+							}
+						}
 						map.updateRow(index, {name: $name.val(), street: $street.val(), city: $city.val(), state: $state.val(), zip: $zip.val(), lat: lat, lng: lng});
 						resetFields();
 						goHome();
 					} else if($name.val() != row.name){
 						map.updateRow(index, {name: $name.val(), street: $street.val(), city: $city.val(), state: $state.val(), zip: $zip.val(), lat: lat, lng: lng});
-						map.markers[index-1][0].setTitle($name.val());
+						for(var i=0, len=map.markers.length; i<len; i++){
+							if (map.markers[i].index === index) {
+								map.markers[i].setTitle($name.val());
+								break;
+							}
+						}
 						resetFields();
 						goHome();
 					} else if($street.val() === row.street || $city.val() === row.city || $state.val() === row.state || $zip.val() === row.zip) {
@@ -134,10 +146,18 @@
 		
 		$("#delete-marker").bind("click", function(e){			
 			var index = $("#edit-marker").attr("value");
-			alert(index);
-			/*map.deleteRow(index);
+			var i, len;
+			for(i = 0, len = map.markers.length; i<len; ++i) { //find index of marker to remove
+				if (map.markers[i].index==index) {
+					break;
+				}				
+			}
+			
+			map.markers = [];
+			map.deleteRow(index);
+			
 			map.init();
-			goHome();*/
+			goHome();
 		});
 		
 		console.log(map.markers);
