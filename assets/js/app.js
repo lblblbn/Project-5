@@ -34,8 +34,6 @@
 			var $state  = $t.find("#state");
 			var $zip    = $t.find("#zip");
 			
-			//var index = map.markers.length +1;
-			
 			var address = [
 				$street.val(),
 				$city.val(),
@@ -139,9 +137,11 @@
 			e.preventDefault();
 		});
 		
-		$("#delete-everything").bind("click", function(e){			
-			map.deleteMarkers();
-			map.init();
+		$("#delete-everything").bind("click", function(e){
+			if(confirm("Delete everything?")) {
+				map.deleteMarkers();
+				map.init();
+			}
 		});
 		
 		$("#delete-marker").bind("click", function(e){			
@@ -153,8 +153,10 @@
 				}				
 			}
 			
-			map.markers = [];
-			map.deleteRow(index);
+			if(confirm("Delete this marker?")) {
+				map.markers = [];
+				map.deleteRow(index);
+			}
 			
 			map.init();
 			goHome();
