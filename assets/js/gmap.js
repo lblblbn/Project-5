@@ -190,6 +190,23 @@
 			return (max+1);
 		}
 		
+		t.setCenter = function(lat, lng) {
+			t.map.setCenter(new google.maps.LatLng(lat, lng));
+		}
+		
+		t.getDist = function(latlng1, latlng2) {
+			var R = 6371; // km
+			var lat1 = latlng1.lat().toRad();
+			var lon1 = latlng1.lng().toRad();
+			var lat2 = latlng2.lat().toRad();
+			var lon2 = latlng2.lng().toRad();
+			var d = Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
+                Math.cos(lat1)*Math.cos(lat2) *
+                Math.cos(lon2-lon1)) * R;
+			alert(d + "km");
+			return d;	
+		}
+		
 		return t;
 	}
 	

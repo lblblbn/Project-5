@@ -146,12 +146,12 @@
 		
 		$("#delete-marker").bind("click", function(e){			
 			var index = $("#edit-marker").attr("value");
-			var i, len;
+			/*var i, len;
 			for(i = 0, len = map.markers.length; i<len; ++i) { //find index of marker to remove
 				if (map.markers[i].index==index) {
 					break;
 				}				
-			}
+			}*/
 			
 			if(confirm("Delete this marker?")) {
 				map.markers = [];
@@ -160,6 +160,62 @@
 			
 			map.init();
 			goHome();
+		});
+		
+		
+		var circle = [];
+		$("#search").submit(function(e){
+			var $t = $(this);
+			var $loc = $t.find("#location");
+			var $dist = $t.find("#distance");
+			var loc = $loc.val();
+			var dist = $dist.val();
+			
+			if (loc) {
+				map.geocode(loc, function(response) {
+					if(response.success) {	
+						var lat = response.results[0].geometry.location.lat();
+						var lng = response.results[0].geometry.location.lng();
+						
+						map.setCenter(lat, lng);
+					
+						if (dist) {
+							var options = {
+								center: new google.maps.LatLng(lat, lng),
+								map: map.map,
+								radius: dist*1000,
+								fillColor: "green",
+							}
+							circle.push(new google.maps.Circle(options));
+							var bounds = circle.getBounds();
+							map.map.fitBounds(bounds);
+							
+							map.getDist(circle.getCenter(), map.markers[0]);
+							/*
+							//only display markers within circle
+							for(var i=0, len=map.markers.length; i<len; i++){
+								if(bounds.contains(map.markers[i].getPosition())){
+									map.markers[i].setVisible(true);
+								} else {
+									map.markers[i].setVisible(false);
+								}
+							}
+							*/
+						}
+						
+						$("#clear").show().bind("click", function(e){
+							$loc.val("");
+							map.map.fitBounds(map.bounds);
+							$(this).hide();
+							for(var i=0, len=circle.length; i<len; i++)
+								circle.pop().setVisible(false);
+							for(var i=0, len=map.markers.length; i<len; i++)
+								map.markers[i].setVisible(true);
+						});
+					}
+				});
+			}
+			e.preventDefault();
 		});
 		
 		console.log(map.markers);

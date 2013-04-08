@@ -34,3 +34,9 @@ h6 { font-size: 14px; }
 #delete-marker {
 	width: 145px;
 }
+
+#search {
+	width: 400px;
+	background: #DDD;
+	border-radius: 40px;
+}

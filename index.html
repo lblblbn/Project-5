@@ -30,8 +30,30 @@
 				
 				<ul class="rounded">
 					<li><div id="map" class="map"></div></li>
+					
 					<li>
-						<!--button class="blueButton"><a class="slideup" href="#add-marker">Add a Marker</a></button-->
+						<form id="search">
+							<div class="location">
+								<label for="location"><i class="icon-search"></i> Search</label>
+								<input type="text" value="" id="location" />
+							</div>
+							<div class="distance">
+								<label for="distance"><span class="icon-fighter-jet"></span>Distance</label>
+								<select name="distance" id="distance">
+									<option value="">Select distance:</option>
+									<option value="25">25 km</option>
+									<option value="50">50 km</option>
+									<option value="100">100 km</option>
+									<option value="250">250 km</option>
+									<option value="500">500 km</option>
+									<option value="1000">1000 km</option>
+								</select>
+								<a href="#" id="clear" style="display:none">Clear Search</a>
+							</div>
+							<button class="blueButton" type="submit">Search</button>
+						</form>
+					</li>
+					<li>
 						<button id="delete-everything" class="redButton">Delete All Markers</button>
 					</li>
 				</ul>
