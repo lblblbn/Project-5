@@ -194,16 +194,21 @@
 			t.map.setCenter(new google.maps.LatLng(lat, lng));
 		}
 		
+		function toRad(Value) {
+			//converts degrees to radians
+			return Value * Math.PI / 180;
+		}
+		
 		t.getDist = function(latlng1, latlng2) {
 			var R = 6371; // km
-			var lat1 = latlng1.lat().toRad();
-			var lon1 = latlng1.lng().toRad();
-			var lat2 = latlng2.lat().toRad();
-			var lon2 = latlng2.lng().toRad();
+			var lat1 = toRad(latlng1.lat());
+			var lon1 = toRad(latlng1.lng());
+			var lat2 = toRad(latlng2.lat());
+			var lon2 = toRad(latlng2.lng());
 			var d = Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
                 Math.cos(lat1)*Math.cos(lat2) *
                 Math.cos(lon2-lon1)) * R;
-			alert(d + "km");
+			console.log(d + "km");
 			return d;	
 		}
 		

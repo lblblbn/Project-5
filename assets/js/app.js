@@ -162,14 +162,14 @@
 			goHome();
 		});
 		
-		
-		var circle = [];
 		$("#search").submit(function(e){
 			var $t = $(this);
 			var $loc = $t.find("#location");
 			var $dist = $t.find("#distance");
 			var loc = $loc.val();
 			var dist = $dist.val();
+			var circles = [];
+			var circle;
 			
 			if (loc) {
 				map.geocode(loc, function(response) {
@@ -186,29 +186,29 @@
 								radius: dist*1000,
 								fillColor: "green",
 							}
-							circle.push(new google.maps.Circle(options));
+							circle = new google.maps.Circle(options);
+							circles.push(circle);
 							var bounds = circle.getBounds();
 							map.map.fitBounds(bounds);
 							
-							map.getDist(circle.getCenter(), map.markers[0]);
-							/*
+							//map.getDist(circle.getCenter(), map.markers[0].getPosition());
+							
 							//only display markers within circle
 							for(var i=0, len=map.markers.length; i<len; i++){
-								if(bounds.contains(map.markers[i].getPosition())){
+								if(map.getDist(circle.getCenter(), map.markers[i].getPosition()) < dist){
 									map.markers[i].setVisible(true);
 								} else {
 									map.markers[i].setVisible(false);
 								}
 							}
-							*/
 						}
 						
 						$("#clear").show().bind("click", function(e){
 							$loc.val("");
 							map.map.fitBounds(map.bounds);
 							$(this).hide();
-							for(var i=0, len=circle.length; i<len; i++)
-								circle.pop().setVisible(false);
+							for(var i=0, len=circles.length; i<len; i++)
+								circles.pop().setVisible(false);
 							for(var i=0, len=map.markers.length; i<len; i++)
 								map.markers[i].setVisible(true);
 						});
